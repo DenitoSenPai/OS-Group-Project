@@ -19,7 +19,7 @@ public class Bartender implements Runnable {
 	public void run() {
 		 while (true)
 	            try {
-	                if (barrel.getAmt() == 0) {
+	                if (barrel.getTotal() == 0) {
 
 	                    if (Main.attempts > 0) {
 	                        Main.pcb.setWakeCount(Main.attempts);
