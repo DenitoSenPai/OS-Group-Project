@@ -1,5 +1,8 @@
 package unsync;
 
+import unsync.ProcessControlBlock.ProcessState;
+import unsync.ProcessControlBlock.ThreadState;
+
 public class Barrel {
 	 private static int total;
 	    private final int MAX = 50;
@@ -15,33 +18,33 @@ public class Barrel {
 	    public synchronized void retrieve() {
 	        try {
 	            if (total > 0) {
-	                Main.pcb.setTid((int) Thread.currentThread().getId());
+	                Main.PCB.setThreadID((int) Thread.currentThread().getId());
 	                count+=total;
-	                Main.pcb.setProcessType(ProcessControlBlock.ProcessType.STUDENT);
-	                Main.pcb.setLightBeerRequired(true);
-	                Main.pcb.setLightBeerConsumption(count);
+	                Main.PCB.setProcessState(ProcessState.Student);
+	                Main.PCB.setLightBeerRequired(true);
+	                Main.PCB.setLightBeerConsumption(count);
 	                total--;
 
 	                System.out.println("Student picked up a beer, currently in barrel: " + total);
-	                Main.pcb.setLightBeerRequired(false);
-	                Main.pcb.setThreadState(ProcessControlBlock.ThreadState.DRINKING);
-	                System.out.println("[THREAD STATE] Student is " + Main.pcb.getThreadState());
+	                Main.PCB.setLightBeerRequired(false);
+	                Main.PCB.setThreadState(ThreadState.Drinking);
+	                System.out.println("[THREAD STATE] Student is " + Main.PCB.getThreadState());
 	                Thread.sleep(1000);
-	                Main.pcb.setThreadState(ProcessControlBlock.ThreadState.THINKING);
-	                System.out.println("[THREAD STATE] Student is " + Main.pcb.getThreadState());
+	                Main.PCB.setThreadState(ThreadState.Thinking);
+	                System.out.println("[THREAD STATE] Student is " + Main.PCB.getThreadState());
 	                Thread.sleep(500);
 	                notify();
 
-	                Main.pcb.setLightBeerConsumption(Main.count++);
+	                Main.PCB.setLightBeerConsumption(Main.Counter++);
 	            } else {
-	                Main.pcb.setThreadState(ProcessControlBlock.ThreadState.WAITING);
-	                System.out.println("[THREAD STATE]: " + Main.pcb.getThreadState());
+	                Main.PCB.setThreadState(ThreadState.Waiting);
+	                System.out.println("[THREAD STATE]: " + Main.PCB.getThreadState());
 
 	                System.out.println("Barrel is empty, notifying the bartender...");
-	                if (Main.attempts == 0) {
+	                if (Main.BarrelRefills == 0) {
 	                    System.out.println("Refills have been exceeded, simulation has finished.");
-	                    Main.pcb.setThreadState(ProcessControlBlock.ThreadState.TERMINATED);
-	                    System.out.println("[THREAD STATE]: " + Main.pcb.getThreadState());
+	                    Main.PCB.setThreadState(ThreadState.Terminated);
+	                    System.out.println("[THREAD STATE]: " + Main.PCB.getThreadState());
 	                    System.exit(0);
 	                }
 	                wait();
@@ -53,19 +56,18 @@ public class Barrel {
 	    public synchronized void put(int n) {
 	        try {
 	            if (total <= 1) {
-	                Main.pcb.setProcessType(ProcessControlBlock.ProcessType.BARTENDER);
+	                Main.PCB.setProcessState(ProcessState.Bartender);
 	                total += n;
-	                System.out.println("Bartender has refilled: " + n + ", currently in barrel: " + total);
-	                Main.pcb.setThreadState(ProcessControlBlock.ThreadState.REFILLING);
+	                System.out.println("Bartender has refilled: " + n + ", Currently in barrel: " + total);
+	                Main.PCB.setThreadState(ThreadState.Refilling);
 	                notify();
 	            } else if (total + n > MAX) {
 	                System.out.println("Barrel is full!");
-	                Main.pcb.setThreadState(ProcessControlBlock.ThreadState.WAITING);
+	                Main.PCB.setThreadState(ThreadState.Waiting);
 	                wait();
 	            }
 	        } catch (InterruptedException e) {
 	            e.printStackTrace();
 	        }
 	    }
-
 }

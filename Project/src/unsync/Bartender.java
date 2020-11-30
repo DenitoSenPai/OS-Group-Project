@@ -19,15 +19,15 @@ public class Bartender implements Runnable {
 	public void run() {
 		 while (true)
 	            try {
-	                if (barrel.getTotal() == 0) {
+	                if (Barrel.getTotal() == 0) {
 
-	                    if (Main.attempts > 0) {
-	                        Main.pcb.setWakeCount(Main.attempts);
+	                    if (Main.BarrelRefills > 0) {
+	                        Main.PCB.setWakeCount(Main.BarrelRefills);
 	                        Thread.sleep(2000);
-	                        Main.attempts--;
+	                        Main.BarrelRefills--;
 	                        System.out.println("*******************************************************************");
 	                        System.out.println("             Bartender Refilling Barrel                            ");
-	                        System.out.println("             attempts remaining: " + Main.attempts + "/3");
+	                        System.out.println("             attempts remaining: " + Main.BarrelRefills + "/3");
 	                        System.out.println("*******************************************************************");
 	                        barrel.put(random());
 	                    }
