@@ -15,9 +15,11 @@ public class Barrel {
 	    public static int getTotal() {
 	        return total;
 	    }
-	    public synchronized void retrieve() {
+	    public synchronized void retrieve() // Initiates And Displays The Thread State Every Time A Student Takes A Flask. 
+	    {
 	        try {
-	            if (total > 0) {
+	            if (total > 0) // Displays The Thread State Until The Barrel Is Empty 
+	            {
 	                Main.PCB.setThreadID((int) Thread.currentThread().getId());
 	                count+=total;
 	                Main.PCB.setProcessState(ProcessState.Student);
@@ -36,12 +38,17 @@ public class Barrel {
 	                notify();
 
 	                Main.PCB.setLightBeerConsumption(Main.Counter++);
-	            } else {
+	            } 
+	            else // Awakens The Bartender Thread If The Barrel Is Empty 
+	            {
 	                Main.PCB.setThreadState(ThreadState.Waiting);
 	                System.out.println("[THREAD STATE]: " + Main.PCB.getThreadState());
-
+	                
+	                System.out.println(" " +Main.PCB.toString()); // When Student Thread Is Paused, The Process Control Block Is Displayed
+	                
 	                System.out.println("Barrel is empty, notifying the bartender...");
-	                if (Main.BarrelRefills == 0) {
+	                if (Main.BarrelRefills == 0) // If The Refill Attempts Have Been Met, The Program Will Terminate/Exit.  
+	                {
 	                    System.out.println("Refills have been exceeded, simulation has finished.");
 	                    Main.PCB.setThreadState(ThreadState.Terminated);
 	                    System.out.println("[THREAD STATE]: " + Main.PCB.getThreadState());
@@ -53,7 +60,8 @@ public class Barrel {
 	            e.printStackTrace();
 	        }
 	    }
-	    public synchronized void put(int n) {
+	    public synchronized void put(int n) // Initiates The Bartender Thread So That The Barrel Can Be Refilled.
+	    {
 	        try {
 	            if (total <= 1) {
 	                Main.PCB.setProcessState(ProcessState.Bartender);
